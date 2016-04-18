@@ -296,6 +296,7 @@ class Haproxy(object):
         return cfg
 
     def _config_backend_sections(self):
+        logger.info("_config_backend_sections:")
         details = self.specs.get_details()
         routes = self.specs.get_routes()
         vhosts = self.specs.get_vhosts()
@@ -305,17 +306,21 @@ class Haproxy(object):
             services_aliases = [None]
         else:
             services_aliases = self.specs.get_service_aliases()
-
+        logger.info("services_aliases: %s", services_aliases)
         for service_alias in services_aliases:
             backend = BackendHelper.get_backend_section(details, routes, vhosts, service_alias, self.routes_added)
-
+            logger.info("BackendHelper.check_backend_has_routes(backend): %s", BackendHelper.check_backend_has_routes(backend))
             if BackendHelper.check_backend_has_routes(backend):
                 if not service_alias:
+                    logger.info("not service_alias: %s", not service_alias)
                     if self.require_default_route:
                         cfg["backend default_service"] = backend
                 else:
+                    logger.info("service_alias: %s", service_alias)
                     if get_service_attribute(details, "virtual_host", service_alias):
+                        logger.info("get_service_attribute: returns true")
                         cfg["backend SERVICE_%s" % service_alias] = backend
                     else:
+                        logger.info("get_service_attribute: returns false")
                         cfg["backend default_service"] = backend
         return cfg
