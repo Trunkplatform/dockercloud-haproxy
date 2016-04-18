@@ -309,6 +309,7 @@ class Haproxy(object):
         logger.info("services_aliases: %s", services_aliases)
         for service_alias in services_aliases:
             backend = BackendHelper.get_backend_section(details, routes, vhosts, service_alias, self.routes_added)
+            logger.info("backend %s", backend)
             logger.info("BackendHelper.check_backend_has_routes(backend): %s", BackendHelper.check_backend_has_routes(backend))
             if BackendHelper.check_backend_has_routes(backend):
                 if not service_alias:
