@@ -311,17 +311,17 @@ class Haproxy(object):
             backend = BackendHelper.get_backend_section(details, routes, vhosts, service_alias, self.routes_added)
             logger.info("backend %s", backend)
             logger.info("BackendHelper.check_backend_has_routes(backend): %s", BackendHelper.check_backend_has_routes(backend))
-            if BackendHelper.check_backend_has_routes(backend):
-                if not service_alias:
-                    logger.info("not service_alias: %s", not service_alias)
-                    if self.require_default_route:
-                        cfg["backend default_service"] = backend
+            # if BackendHelper.check_backend_has_routes(backend):
+            if not service_alias:
+                logger.info("not service_alias: %s", not service_alias)
+                if self.require_default_route:
+                    cfg["backend default_service"] = backend
+            else:
+                logger.info("service_alias: %s", service_alias)
+                if get_service_attribute(details, "virtual_host", service_alias):
+                    logger.info("get_service_attribute: returns true")
+                    cfg["backend SERVICE_%s" % service_alias] = backend
                 else:
-                    logger.info("service_alias: %s", service_alias)
-                    if get_service_attribute(details, "virtual_host", service_alias):
-                        logger.info("get_service_attribute: returns true")
-                        cfg["backend SERVICE_%s" % service_alias] = backend
-                    else:
-                        logger.info("get_service_attribute: returns false")
-                        cfg["backend default_service"] = backend
+                    logger.info("get_service_attribute: returns false")
+                    cfg["backend default_service"] = backend
         return cfg
